@@ -1,0 +1,12 @@
+# Claude Code local configuration
+.claude/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Environment variables (if any are added later)
+.env
+.env.local
