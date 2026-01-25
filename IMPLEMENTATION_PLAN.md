@@ -269,6 +269,42 @@ Options to explore later:
 - Verify credentials are correct in config
 - First auth requires browser interaction
 
+### Known Issues & Fixes
+
+#### Transaction Amount Bugs (Jan 2026)
+If you installed copilot-money-mcp before Jan 20, 2026, you may have v1.1.0 which has 4 critical bugs affecting transaction amounts and categorization:
+
+**Critical bugs in v1.1.0:**
+- 64-bit varint decoding - corrupts large negative amounts (e.g., -$149 shows as -$5)
+- Sign convention - causes 93% of spending to show as "Uncategorized"
+- Date filtering - category totals 2-4x higher than actual
+- Category-based exclusion filtering - not working properly
+
+**Fix**: Install from GitHub main branch until v1.2.0+ is officially released:
+
+```bash
+# Uninstall current version
+npm uninstall -g copilot-money-mcp
+
+# Clone and build from GitHub
+cd /tmp
+git clone https://github.com/ignaciohermosillacornejo/copilot-money-mcp.git
+cd copilot-money-mcp
+npm install
+~/.bun/bin/bun build src/cli.ts --outdir dist --target node --format esm
+chmod +x dist/cli.js
+
+# Install globally
+npm install -g .
+```
+
+**Note**: Building requires [bun](https://bun.sh) runtime. Install with: `curl -fsSL https://bun.sh/install | bash`
+
+**Verification**: After installation, restart Claude Code and test:
+- Transaction amounts should match Copilot Money UI exactly
+- Spending by category should show proper distribution (not 93% uncategorized)
+- Category totals should match UI (not be 2-4x inflated)
+
 ---
 
 ## Source Links
@@ -285,13 +321,41 @@ Options to explore later:
 
 ## Quick Start Checklist
 
-- [ ] Copilot Money macOS App Store version installed and synced
-- [ ] `npm install -g copilot-money-mcp` completed
-- [ ] Google Cloud Project created with Sheets/Drive APIs enabled
-- [ ] OAuth credentials created (Desktop app type)
-- [ ] `~/.claude.json` configured with both MCP servers
-- [ ] Claude Code restarted
-- [ ] Google OAuth flow completed
+- [x] Copilot Money macOS App Store version installed and synced
+- [x] `copilot-money-mcp` installed from GitHub (with bug fixes)
+- [x] Google Cloud Project created with Sheets/Drive APIs enabled
+- [x] OAuth credentials created (Desktop app type)
+- [x] `~/.claude.json` configured with both MCP servers
+- [ ] Claude Code restarted (DO THIS NOW)
+- [ ] Google OAuth flow completed (will prompt on first use)
 - [ ] Test queries working for both data sources
-- [ ] CLAUDE.md created with your specific finance rules
+- [x] CLAUDE.md created with project guidance
 - [ ] All 4 target questions answerable
+
+---
+
+## Current Progress (Jan 23, 2026)
+
+### COMPLETED
+1. **Copilot Money MCP** - Fully working, validated against CSV export (81% cache coverage, 100% accuracy)
+2. **2025 Spending Analysis** - Complete, saved to `2025_SPENDING_ANALYSIS.md`
+   - Total spend: $413,892
+   - Credit card optimization: $1,439/year left on table
+   - Main fix: Use Amex Platinum for flights
+3. **Google Workspace MCP** - OAuth credentials configured
+
+### NEXT STEPS (After Restart)
+1. Restart Claude Code to load Google OAuth credentials
+2. First Google Sheets request will open browser for authorization
+3. Share Cashflow Google Sheet URL
+4. Read sheet to understand budget model
+5. Cross-reference spending with budgets
+6. Answer the 4 key questions
+
+### Your Google Sheet URL
+After restart, share your Cashflow sheet URL. Format:
+```
+https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
+```
+
+Or just tell me the name and I'll search for it.
