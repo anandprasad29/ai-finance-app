@@ -10,3 +10,6 @@
 # Environment variables (if any are added later)
 .env
 .env.local
+
+# Node.js
+node_modules/
